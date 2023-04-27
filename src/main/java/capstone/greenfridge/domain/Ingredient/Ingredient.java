@@ -17,5 +17,4 @@ public class Ingredient {
     private final Long carbonOutput;
     private final String disposal;
     private final Long durationAt;
-    private final LocalDate storedAt;
 }
