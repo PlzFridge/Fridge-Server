@@ -41,4 +41,9 @@ public class IngredientService {
         fridgeMapper.saveIngredient(fridgeVO);
         //ingredientDTO의 유효기간이 비어있다면 재료이름을 통해 평균적인 유통기한 입력
     }
+
+    public void deleteIngredient(Long ingredientId){
+
+        fridgeMapper.deleteIngredient(ingredientId);
+    }
 }
