@@ -6,4 +6,10 @@
         insert into fridge(ingredient_id,ingredient_name,stored_at,duration_at)
         values (#{ingredientId},#{ingredientName},#{storedAt},#{durationAt})
     </insert>
+
+    <delete id="deleteIngredient">
+        delete
+        from fridge
+        where ingredient_id=#{ingredientId}
+    </delete>
 </mapper>
