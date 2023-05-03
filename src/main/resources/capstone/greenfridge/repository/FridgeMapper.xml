@@ -10,6 +10,14 @@
     <delete id="deleteIngredient">
         delete
         from fridge
-        where ingredient_id=#{ingredientId}
+        where id=#{fridgeId}
     </delete>
+
+    <select id="getFridgeList" resultType="FridgeListVO">
+        select fri.id as fridgeId, fri.ingredient_name, ingr.ingredient_img, fri.stored_at, fri.duration_at
+        from fridge as fri left join ingredient as ingr
+        on fri.ingredient_id = ingr.id
+        order by duration_at
+    </select>
+
 </mapper>
