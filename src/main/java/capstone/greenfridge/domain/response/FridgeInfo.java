@@ -1,5 +1,6 @@
-package capstone.greenfridge.domain;
+package capstone.greenfridge.domain.response;
 
+import capstone.greenfridge.domain.FridgeListVO;
 import lombok.Builder;
 import lombok.Getter;
 
