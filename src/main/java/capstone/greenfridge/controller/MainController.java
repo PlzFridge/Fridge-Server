@@ -1,7 +1,8 @@
 package capstone.greenfridge.controller;
 
 import capstone.greenfridge.domain.Ingredient.IngredientDTO;
-import capstone.greenfridge.domain.FridgeInfo;
+import capstone.greenfridge.domain.response.FridgeCRUD;
+import capstone.greenfridge.domain.response.FridgeInfo;
 import capstone.greenfridge.service.IngredientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,13 @@ public class MainController {
     private final IngredientService ingredientService;
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)
-    public String saveIngredient(@RequestBody IngredientDTO ingredientDTO){
-        ingredientService.saveIngredient(ingredientDTO);
-        return SUCCESS_SAVE_INGREDIENT.getMessage();
+    public FridgeCRUD saveIngredient(@RequestBody IngredientDTO ingredientDTO){
+        return ingredientService.saveIngredient(ingredientDTO);
     }
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteIngredient(@RequestParam Long fridgeId){
-        ingredientService.deleteIngredient(fridgeId);
-        return SUCCESS_DELETE_INGREDIENT.getMessage();
+    public FridgeCRUD deleteIngredient(@RequestParam Long fridgeId){
+        return ingredientService.deleteIngredient(fridgeId);
     }
     @GetMapping("/fridge-list")
     @ResponseStatus(HttpStatus.OK)
