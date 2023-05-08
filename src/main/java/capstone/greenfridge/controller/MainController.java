@@ -3,6 +3,7 @@ package capstone.greenfridge.controller;
 import capstone.greenfridge.domain.Ingredient.IngredientDTO;
 import capstone.greenfridge.domain.response.FridgeCRUD;
 import capstone.greenfridge.domain.response.FridgeInfo;
+import capstone.greenfridge.domain.response.RecipeInfo;
 import capstone.greenfridge.service.IngredientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,4 +32,9 @@ public class MainController {
         return ingredientService.getFridgeList();
     }
 
+    @GetMapping("/recommend")
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeInfo recommendRecipe(){
+        return ingredientService.recommendRecipe();
+    }
 }
