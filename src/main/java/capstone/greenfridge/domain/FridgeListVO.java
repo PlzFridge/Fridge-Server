@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Builder
 public class FridgeListVO {
     private Long fridgeId;
+    private Long ingredientId;
     private String ingredientName;
     private String ingredientImg;
     private LocalDate storedAt;
