@@ -8,6 +8,7 @@ import capstone.greenfridge.domain.MyFridgeVO;
 import capstone.greenfridge.domain.Recipe;
 import capstone.greenfridge.domain.response.FridgeCRUD;
 import capstone.greenfridge.domain.response.FridgeInfo;
+import capstone.greenfridge.domain.response.RecipeData;
 import capstone.greenfridge.domain.response.RecipeInfo;
 import capstone.greenfridge.repository.FridgeMapper;
 import capstone.greenfridge.repository.IngredientMapper;
@@ -30,6 +31,8 @@ public class IngredientService {
     private final FridgeMapper fridgeMapper;
     private final RecipeMapper recipeMapper;
     private final static Map<String,Long> ingredientMap=new LinkedHashMap<>();
+    private final static Map<Long,String> ingredientMapInverse=new LinkedHashMap<>();
+    private final static Map<Long,Long> ingredientMapCarbon=new LinkedHashMap<>();
     private final static Map<String,Set<Long>> recipeIngredient=new LinkedHashMap<>();
     @PostConstruct
     public void init(){
@@ -38,6 +41,8 @@ public class IngredientService {
 
         for(IngredientVO i:initIngredientData){//재료종류 불러와서 이름,id로 저장
             ingredientMap.put(i.getIngredientName(),i.getIngredientId());
+            ingredientMapInverse.put(i.getIngredientId(),i.getIngredientName());
+            ingredientMapCarbon.put(i.getIngredientId(),i.getCarbonOutput());
         }
         for(Recipe i:initRecipeData){
             String[] temp=i.getIngredientList().split("/");
@@ -115,21 +120,22 @@ public class IngredientService {
 
     public RecipeInfo recommendRecipe(){
         List<FridgeListVO> curFridgeData=fridgeMapper.getFridgeList();
-        List<Recipe> data=new ArrayList<>();
-        long[] score=new long[recipeIngredient.size()];
+        List<RecipeData> data=new ArrayList<>();
+        long[] score=new long[recipeIngredient.size()+1];
         long[] maxIdxArray=new long[3];
 
+        System.out.println(recipeIngredient.values());
         for(FridgeListVO i:curFridgeData){
-            String tempName=i.getIngredientName();
-            int idx=0;
-            for(Set<Long> j:recipeIngredient.values()){
+
+            int idx=1;
+            for(Set<Long> j:recipeIngredient.values()){//[[17, 1, 19, 4, 5, 30], [4, 30, 15, 31], [4, 23, 12, 30], [1, 18, 2, 3, 4, 5, 30], [1, 20, 5, 10, 14], [17, 19, 5, 9] ~~]
                 if(j.contains(i.getIngredientId())){
                     score[idx]=score[idx]+10;
                 }
                 idx++;
             }
         }
-
+        //각 레시피별 점수 매기기 완료된 상태
         for(int i=0;i<3;i++){
             long maxValue=0;
             int maxIdx=0;
@@ -145,7 +151,42 @@ public class IngredientService {
         //점수 제일 높은 레시피의 id 3개 maxIdxArray에 저장된 상태
         for(int i=0;i<3;i++){
             Recipe selected=recipeMapper.getRecipe(maxIdxArray[i]);
-            data.add(selected);
+            List<String> existIngredient=new ArrayList<>();
+            List<String> nonExistIngredient=new ArrayList<>();
+            Long carbonOutput=0L;
+            //System.out.println(recipeIngredient.get(selected.getRecipeName())); [17, 19, 5, 9]
+
+            Set<Long> ingredientList=recipeIngredient.get(selected.getRecipeName());
+            for(Long j:ingredientList){
+                boolean flag=false;
+                carbonOutput+=ingredientMapCarbon.get(j);
+                for(FridgeListVO k:curFridgeData){//현재 가지고있는 재료 리스트 탐색 [1, 3, 16, 1]
+                    if(j.equals(k.getIngredientId())) {
+                        flag=true;
+                        break;
+                    }
+                }
+                if(flag){//만드는데 필요한 재료가 가지고 있는 재료중에 있을경우
+                    existIngredient.add(ingredientMapInverse.get(j));
+                }
+                else{
+                    nonExistIngredient.add(ingredientMapInverse.get(j));
+                }
+            }
+
+            RecipeData temp=RecipeData.builder()
+                    .recipeId(selected.getRecipeId())
+                    .recipeImg(selected.getRecipeImg())
+                    .recipeName(selected.getRecipeName())
+                    .ingredientList(selected.getIngredientList())
+                    .method(selected.getMethod())
+                    .existList(existIngredient)
+                    .notExistList(nonExistIngredient)
+                    .carbon(carbonOutput)
+                    .build();
+            data.add(temp);
+
+
         }
 
         return RecipeInfo.builder()

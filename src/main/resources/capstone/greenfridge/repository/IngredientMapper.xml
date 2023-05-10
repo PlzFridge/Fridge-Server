@@ -8,7 +8,7 @@
         where ingredient_name=#{ingredientName}
     </select>
     <select id="toInitIngredientMap" resultType="IngredientVO">
-        select id, ingredient_name
+        select id, ingredient_name, carbon_output
         from ingredient
     </select>
 </mapper>

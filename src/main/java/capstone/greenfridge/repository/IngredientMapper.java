@@ -10,6 +10,5 @@ import java.util.Optional;
 @Mapper
 public interface IngredientMapper {
     Optional<Ingredient> findByIngredientName(String ingredientName);
-
     List<IngredientVO> toInitIngredientMap();
 }

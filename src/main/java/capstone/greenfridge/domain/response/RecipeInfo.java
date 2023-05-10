@@ -12,5 +12,5 @@ import java.util.List;
 public class RecipeInfo {
     private final Integer status;
     private final String message;
-    private final List<Recipe> data;
+    private final List<RecipeData> data;
 }

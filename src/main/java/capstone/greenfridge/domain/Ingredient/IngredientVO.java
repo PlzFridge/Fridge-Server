@@ -8,4 +8,5 @@ import lombok.Getter;
 public class IngredientVO {
     private final Long ingredientId;
     private final String ingredientName;
+    private final Long carbonOutput;
 }
