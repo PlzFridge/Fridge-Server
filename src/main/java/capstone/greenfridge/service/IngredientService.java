@@ -107,6 +107,17 @@ public class IngredientService {
                 .build();
     }
 
+    public FridgeCRUD deleteAfterEat(String usedIngredient){
+        List<String> ateIngredient=Arrays.asList(usedIngredient.split(","));
+        fridgeMapper.deleteAfterEat(ateIngredient);
+
+        return FridgeCRUD.builder()
+                .status(HttpStatus.OK.value())
+                .success(true)
+                .message(SUCCESS_DELETE_INGREDIENT.getMessage())
+                .build();
+    }
+
     public FridgeInfo getFridgeList(){
 
         List<FridgeListVO> data=fridgeMapper.getFridgeList();
