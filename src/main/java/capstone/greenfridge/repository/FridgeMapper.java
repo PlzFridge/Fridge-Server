@@ -11,5 +11,6 @@ import java.util.List;
 public interface FridgeMapper {
     void saveIngredient(MyFridgeVO fridgeVO);
     void deleteIngredient(Long fridgeId);
+    void deleteAfterEat(List<String> ateIngredient);
     List<FridgeListVO> getFridgeList();
 }

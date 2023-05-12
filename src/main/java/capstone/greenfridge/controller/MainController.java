@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 import static capstone.greenfridge.domain.ExceptionMessageConst.*;
 
 @RestController
@@ -36,5 +39,11 @@ public class MainController {
     @ResponseStatus(HttpStatus.OK)
     public RecipeInfo recommendRecipe(){
         return ingredientService.recommendRecipe();
+    }
+
+    @DeleteMapping("delete-after")
+    @ResponseStatus(HttpStatus.OK)
+    public FridgeCRUD deleteAfterEat(@RequestBody Map<String,String> deleteList){
+        return ingredientService.deleteAfterEat(deleteList.get("deleteList"));
     }
 }
