@@ -41,7 +41,7 @@ public class MainController {
         return ingredientService.recommendRecipe();
     }
 
-    @DeleteMapping("delete-after")
+    @DeleteMapping("/delete-after")
     @ResponseStatus(HttpStatus.OK)
     public FridgeCRUD deleteAfterEat(@RequestBody Map<String,String> deleteList){
         return ingredientService.deleteAfterEat(deleteList.get("deleteList"));
