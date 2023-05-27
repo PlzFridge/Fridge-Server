@@ -135,7 +135,6 @@ public class IngredientService {
         long[] score=new long[recipeIngredient.size()+1];
         long[] maxIdxArray=new long[3];
 
-        System.out.println(recipeIngredient.values());
         for(FridgeListVO i:curFridgeData){
 
             int idx=1;
@@ -165,7 +164,6 @@ public class IngredientService {
             List<String> existIngredient=new ArrayList<>();
             List<String> nonExistIngredient=new ArrayList<>();
             Long carbonOutput=0L;
-            //System.out.println(recipeIngredient.get(selected.getRecipeName())); [17, 19, 5, 9]
 
             Set<Long> ingredientList=recipeIngredient.get(selected.getRecipeName());
             for(Long j:ingredientList){
