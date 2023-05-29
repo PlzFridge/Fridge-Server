@@ -16,6 +16,7 @@ import static capstone.greenfridge.domain.ExceptionMessageConst.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class MainController {
 
     private final IngredientService ingredientService;
@@ -41,7 +42,7 @@ public class MainController {
         return ingredientService.recommendRecipe();
     }
 
-    @DeleteMapping("/delete-after")
+    @PostMapping("/delete-after")
     @ResponseStatus(HttpStatus.OK)
     public FridgeCRUD deleteAfterEat(@RequestBody Map<String,String> deleteList){
         return ingredientService.deleteAfterEat(deleteList.get("deleteList"));

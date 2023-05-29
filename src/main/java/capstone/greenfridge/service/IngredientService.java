@@ -145,11 +145,12 @@ public class IngredientService {
                 idx++;
             }
         }
+
         //각 레시피별 점수 매기기 완료된 상태
         for(int i=0;i<3;i++){
             long maxValue=0;
             int maxIdx=0;
-            for(int j=0;j<recipeIngredient.size();j++){
+            for(int j=0;j<=recipeIngredient.size();j++){
                 if(maxValue<score[j]){
                     maxValue=score[j];
                     maxIdx=j;
@@ -158,13 +159,17 @@ public class IngredientService {
             maxIdxArray[i]=maxIdx;
             score[maxIdx]=-1;
         }
+
         //점수 제일 높은 레시피의 id 3개 maxIdxArray에 저장된 상태
-        for(int i=0;i<3;i++){
+        for(int i=0;i<3&&maxIdxArray[i]!=0;i++){
+            //System.out.println(maxIdxArray[i]);
+
             Recipe selected=recipeMapper.getRecipe(maxIdxArray[i]);
             List<String> existIngredient=new ArrayList<>();
             List<String> nonExistIngredient=new ArrayList<>();
             Long carbonOutput=0L;
 
+            
             Set<Long> ingredientList=recipeIngredient.get(selected.getRecipeName());
             for(Long j:ingredientList){
                 boolean flag=false;
