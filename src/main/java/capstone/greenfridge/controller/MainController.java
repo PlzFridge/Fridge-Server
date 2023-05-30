@@ -16,7 +16,7 @@ import static capstone.greenfridge.domain.ExceptionMessageConst.*;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class MainController {
 
     private final IngredientService ingredientService;
