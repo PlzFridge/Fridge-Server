@@ -69,6 +69,9 @@ public class IngredientService {
         Boolean success= tempIngredient.isPresent();
         String message=(tempIngredient.isEmpty())? FAILED_SAVE_INGREDIENT.getMessage()
                 : SUCCESS_SAVE_INGREDIENT.getMessage();
+        HttpStatus status=(tempIngredient.isEmpty())? HttpStatus.NO_CONTENT
+                : HttpStatus.CREATED;
+
 
         if(success) {//들어온 입력에 해당하는 재료가 존재할시
             if (ingredientDTO.getDurationAt() == null) {
@@ -90,7 +93,7 @@ public class IngredientService {
         }
 
         return FridgeCRUD.builder()
-                .status(HttpStatus.CREATED.value())
+                .status(status.value())
                 .success(success)
                 .message(message)
                 .build();
