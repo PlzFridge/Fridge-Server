@@ -16,18 +16,20 @@
     <delete id="deleteAfterEat" parameterType="List">
         delete
         from fridge
-        where id= ANY(
-        SELECT id
-        FROM fridge
-        WHERE (ingredient_name, duration_at) IN(
-            SELECT ingredient_name, MIN(duration_at)
-            FROM fridge
-            GROUP BY ingredient_name
-        ) AND ingredient_name IN
-        <foreach collection="list" item='ateIngredient' open='(' close=')' separator=",">
-            #{ateIngredient}
-        </foreach>
-        )
+        where id= ANY
+            (SELECT id
+            FROM
+                (SELECT id
+                     from fridge
+            WHERE (ingredient_name, duration_at) IN(
+                SELECT ingredient_name, MIN(duration_at)
+                FROM fridge
+                GROUP BY ingredient_name
+            )  AND ingredient_name IN
+            <foreach collection="list" item='ateIngredient' open='(' close=')' separator=",">
+                #{ateIngredient}
+            </foreach>
+            ) tmp )
     </delete>
 
 
