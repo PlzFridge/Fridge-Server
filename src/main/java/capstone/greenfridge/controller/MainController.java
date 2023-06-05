@@ -25,6 +25,12 @@ public class MainController {
     public FridgeCRUD saveIngredient(@RequestBody IngredientDTO ingredientDTO){
         return ingredientService.saveIngredient(ingredientDTO);
     }
+    @PostMapping("/save-english")
+    @ResponseStatus(HttpStatus.CREATED)
+    public FridgeCRUD saveIngredientEng(@RequestBody IngredientDTO ingredientDTO){
+        return ingredientService.saveIngredientEng(ingredientDTO);
+    }
+
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
     public FridgeCRUD deleteIngredient(@RequestParam Long fridgeId){
