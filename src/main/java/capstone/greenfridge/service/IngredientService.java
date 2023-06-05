@@ -34,6 +34,8 @@ public class IngredientService {
     private final static Map<Long,String> ingredientMapInverse=new LinkedHashMap<>();
     private final static Map<Long,Long> ingredientMapCarbon=new LinkedHashMap<>();
     private final static Map<String,Set<Long>> recipeIngredient=new LinkedHashMap<>();
+    private final static Map<String,String> ingredientNameMapping=new HashMap<>();
+
     @PostConstruct
     public void init(){
         List<IngredientVO> initIngredientData=ingredientMapper.toInitIngredientMap();
@@ -55,6 +57,41 @@ public class IngredientService {
         }
 
         //레시피는 순서대로, 재료 ID가 각각 Set 으로 저장되어있는 상태
+        nameMapping();
+    }
+
+    public void nameMapping(){
+        ingredientNameMapping.put("potato","감자");
+        ingredientNameMapping.put("tomato","토마토");
+        ingredientNameMapping.put("eggplant","가지");
+        ingredientNameMapping.put("cucumber","오이");
+        ingredientNameMapping.put("pear","배");
+        ingredientNameMapping.put("apple","사자");
+        ingredientNameMapping.put("carrot","당근");
+        ingredientNameMapping.put("onion","양파");
+        ingredientNameMapping.put("garlic","마늘");
+        ingredientNameMapping.put("spring_onion","대파");
+        ingredientNameMapping.put("sweet_potato","고구마");
+        ingredientNameMapping.put("spinach","시금치");
+        ingredientNameMapping.put("bean_sprout","콩나물");
+        ingredientNameMapping.put("bell_pepper","피망");
+        ingredientNameMapping.put("zucchini","애호박");
+        ingredientNameMapping.put("mushroom","버섯");
+        ingredientNameMapping.put("fish_cake","어묵");
+        ingredientNameMapping.put("egg","계란");
+        ingredientNameMapping.put("kimchi","김치");
+        ingredientNameMapping.put("chicken","닭고기");
+        ingredientNameMapping.put("beef","소고기");
+        ingredientNameMapping.put("pork","돼지고기");
+        ingredientNameMapping.put("sausage","소시지");
+        ingredientNameMapping.put("tofu","두부");
+        ingredientNameMapping.put("shrimp","새우");
+        ingredientNameMapping.put("rice_cake","떡");
+        ingredientNameMapping.put("cheese","치즈");
+        ingredientNameMapping.put("grape","포도");
+        ingredientNameMapping.put("fish","고등어");
+        ingredientNameMapping.put("pepper","고추");
+        ingredientNameMapping.put("raddish","무");
 
     }
 
@@ -97,6 +134,48 @@ public class IngredientService {
                 .success(success)
                 .message(message)
                 .build();
+    }
+
+    public FridgeCRUD saveIngredientEng(IngredientDTO ingredientDTO) {
+
+        String tempIngredientName=ingredientNameMapping.get(ingredientDTO.getIngredientName());
+        LocalDate durationAt;
+
+        Optional<Ingredient> tempIngredient=ingredientMapper.findByIngredientName(tempIngredientName);
+
+        boolean success= tempIngredient.isPresent();
+        String message=(tempIngredient.isEmpty())? FAILED_SAVE_INGREDIENT.getMessage()
+                : SUCCESS_SAVE_INGREDIENT.getMessage();
+        HttpStatus status=(tempIngredient.isEmpty())? HttpStatus.NO_CONTENT
+                : HttpStatus.CREATED;
+
+        System.out.println("ingredientDTO.getIngredientName() = " + ingredientDTO.getIngredientName());
+        System.out.println("ingredientDTO.getDurationAt() = " + ingredientDTO.getDurationAt());
+
+        if (success) {
+            if (ingredientDTO.getDurationAt() == null) {
+                LocalDate todayLocalDate = LocalDate.now();
+                Long duration = tempIngredient.get().getDurationAt();
+
+                durationAt = todayLocalDate.plusDays(duration);
+            } else {
+                durationAt = ingredientDTO.getDurationAt();
+            }
+
+            MyFridgeVO fridgeVO = MyFridgeVO.builder()
+                    .ingredientId(tempIngredient.get().getIngredientId())
+                    .ingredientName(tempIngredientName)
+                    .durationAt(durationAt)
+                    .storedAt(LocalDate.now())
+                    .build();
+            fridgeMapper.saveIngredient(fridgeVO);
+        }
+        return FridgeCRUD.builder()
+                .status(status.value())
+                .success(success)
+                .message(message)
+                .build();
+
     }
 
     public FridgeCRUD deleteIngredient(Long fridgeId){
@@ -212,5 +291,6 @@ public class IngredientService {
                 .data(data)
                 .build();
     }
+
 
 }
