@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static capstone.greenfridge.domain.ExceptionMessageConst.*;
@@ -149,9 +151,6 @@ public class IngredientService {
         HttpStatus status=(tempIngredient.isEmpty())? HttpStatus.NO_CONTENT
                 : HttpStatus.CREATED;
 
-        System.out.println("ingredientDTO.getIngredientName() = " + ingredientDTO.getIngredientName());
-        System.out.println("ingredientDTO.getDurationAt() = " + ingredientDTO.getDurationAt());
-
         if (success) {
             if (ingredientDTO.getDurationAt() == null) {
                 LocalDate todayLocalDate = LocalDate.now();
@@ -218,11 +217,17 @@ public class IngredientService {
         long[] maxIdxArray=new long[3];
 
         for(FridgeListVO i:curFridgeData){
+            LocalDate temp= i.getDurationAt();
+            LocalDate cur=LocalDate.now();
+            long chronoUnit=ChronoUnit.DAYS.between(cur,temp);
+            if(chronoUnit==0L){
+                chronoUnit=1;
+            }
 
             int idx=1;
-            for(Set<Long> j:recipeIngredient.values()){//[[17, 1, 19, 4, 5, 30], [4, 30, 15, 31], [4, 23, 12, 30], [1, 18, 2, 3, 4, 5, 30], [1, 20, 5, 10, 14], [17, 19, 5, 9] ~~]
+            for(Set<Long> j:recipeIngredient.values()){
                 if(j.contains(i.getIngredientId())){
-                    score[idx]=score[idx]+10;
+                    score[idx]=score[idx]+1000/chronoUnit;
                 }
                 idx++;
             }
@@ -244,7 +249,6 @@ public class IngredientService {
 
         //점수 제일 높은 레시피의 id 3개 maxIdxArray에 저장된 상태
         for(int i=0;i<3&&maxIdxArray[i]!=0;i++){
-            //System.out.println(maxIdxArray[i]);
 
             Recipe selected=recipeMapper.getRecipe(maxIdxArray[i]);
             List<String> existIngredient=new ArrayList<>();
@@ -255,14 +259,15 @@ public class IngredientService {
             Set<Long> ingredientList=recipeIngredient.get(selected.getRecipeName());
             for(Long j:ingredientList){
                 boolean flag=false;
-                carbonOutput+=ingredientMapCarbon.get(j);
-                for(FridgeListVO k:curFridgeData){//현재 가지고있는 재료 리스트 탐색 [1, 3, 16, 1]
+
+                for(FridgeListVO k:curFridgeData){//현재 가지고있는 재료 리스트 탐색
                     if(j.equals(k.getIngredientId())) {
                         flag=true;
                         break;
                     }
                 }
                 if(flag){//만드는데 필요한 재료가 가지고 있는 재료중에 있을경우
+                    carbonOutput+=ingredientMapCarbon.get(j);
                     existIngredient.add(ingredientMapInverse.get(j));
                 }
                 else{
@@ -291,6 +296,5 @@ public class IngredientService {
                 .data(data)
                 .build();
     }
-
 
 }
